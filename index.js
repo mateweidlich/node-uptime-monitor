@@ -49,25 +49,22 @@ const unifiedServer = (req, res) => {
     buffer += decoder.write(data);
   });
 
-  req.on('end', () => {
+  req.on('end', async () => {
     buffer += decoder.end();
 
     // check if path exists in router
     const handler = path in router ? router[path] : handlers.notFound;
-    handler(
-      {
-        method,
-        headers,
-        path,
-        query,
-        payload: helpers.parseJsonToObject(buffer)
-      },
-      (statusCode = 200, payload = {}) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.writeHead(statusCode);
-        res.end(JSON.stringify(payload));
-      }
-    );
+    const [statusCode = 200, payload = {}] = await handler({
+      method,
+      headers,
+      path,
+      query,
+      payload: helpers.parseJsonToObject(buffer)
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.writeHead(statusCode);
+    res.end(JSON.stringify(payload));
   });
 };
 
