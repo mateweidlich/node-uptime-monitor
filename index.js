@@ -37,7 +37,6 @@ const unifiedServer = (req, res) => {
   const method = req.method.toLowerCase();
 
   const headers = req.headers;
-
   const parsedUrl = url.parse(req.url, true);
   const path = parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
   const query = parsedUrl.query;
@@ -71,5 +70,6 @@ const unifiedServer = (req, res) => {
 // router
 const router = {
   ping: handlers.ping,
-  users: handlers.users
+  users: handlers.users,
+  tokens: handlers.tokens
 };
